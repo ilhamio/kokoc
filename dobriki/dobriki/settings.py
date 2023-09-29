@@ -33,7 +33,7 @@ else:
         "http://127.0.0.1:3000/",
     ]
 
-ALLOWED_HOSTS = ['176.53.162.79', '0.0.0.0']
+ALLOWED_HOSTS = ['176.53.162.79', '0.0.0.0', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "corsheaders",
     "drf_yasg",
+    "feed"
 ]
 
 MIDDLEWARE = [
@@ -102,6 +103,12 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
