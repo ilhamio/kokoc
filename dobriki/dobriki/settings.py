@@ -33,7 +33,7 @@ else:
         "http://127.0.0.1:3000/",
     ]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['176.53.162.79', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
