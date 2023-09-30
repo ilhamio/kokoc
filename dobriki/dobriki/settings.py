@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "competitions",
     "activity",
     "charity",
+    "achievement"
 ]
 
 MIDDLEWARE = [
