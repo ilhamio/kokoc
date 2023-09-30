@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "feed",
     "competitions",
-    "config"
+    "activity"
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
-from .views import ConfigViewSet
+from activity.views import ActivityViewSet
 
 router = DefaultRouter()
-router.register(r'configs', ConfigViewSet)
+router.register(r'activity', ActivityViewSet)
 
 urlpatterns = router.urls
