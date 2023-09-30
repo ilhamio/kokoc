@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "feed",
-    "competitions"
+    "competitions",
+    "config"
 ]
 
 MIDDLEWARE = [
