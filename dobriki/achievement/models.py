@@ -8,6 +8,7 @@ class Achievement(models.Model):
     name = models.CharField(verbose_name="Название достижения", max_length=255)
     description = models.TextField(verbose_name="Описание")
     time_limit = models.DurationField(verbose_name="Срок выполнения", help_text="Введите срок в формате дни:часы:минуты")
+    image = models.ImageField(upload_to='blog/achievement', max_length=100, blank=True, null=True, verbose_name="Изображение")
     target_value = models.PositiveIntegerField(verbose_name="Цель", help_text="Минимальное значение (например, минуты тренировки или километры пробега)")
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='UserAchievement', related_name='achievements')
 
