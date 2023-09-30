@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from competitions.models import UserTeam
+from competitions.models import UserTeam, PersonalCompetition
 
 User = get_user_model()
 
@@ -17,4 +17,10 @@ class UserTeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserTeam
+        fields = '__all__'
+
+
+class PersonalCompetitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonalCompetition
         fields = '__all__'
