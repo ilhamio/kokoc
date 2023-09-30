@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     "drf_yasg",
     "feed",
     "competitions",
-    "activity"
+    "activity",
+    "charity",
 ]
 
 MIDDLEWARE = [
