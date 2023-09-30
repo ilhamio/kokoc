@@ -23,6 +23,7 @@ class UserTeamViewSet(viewsets.ModelViewSet):
         request.user.teams.add(obj)
         return Response({'result': "successfully applied"}, status=200)
 
+
 class PersonalCompetitionViewSet(viewsets.ModelViewSet):
     queryset = PersonalCompetition.objects.all()
     serializer_class = PersonalCompetitionSerializer
