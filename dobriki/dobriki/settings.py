@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "corsheaders",
     "drf_yasg",
-    "feed"
+    "feed",
+    "competitions"
 ]
 
 MIDDLEWARE = [
