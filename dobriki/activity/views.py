@@ -19,8 +19,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         serializer = ActivitySnapshotSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.data
-        data['user'] = request.user
         activity_id = data['activity_type']
         del data['activity_type']
-        ActivitySnapshot.objects.create(activity_type_id=activity_id, user_id=request.user.id, **data)
+        ActivitySnapshot.objects.create(activity_type_id=activity_id, **data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
