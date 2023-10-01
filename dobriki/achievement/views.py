@@ -8,10 +8,8 @@ from achievement.serializers import AchievementSerializer, UserAchievementSerial
 class AchievementViewSet(viewsets.ModelViewSet):
     queryset = Achievement.objects.all()
     serializer_class = AchievementSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class UserAchievementViewSet(viewsets.ModelViewSet):
     queryset = UserAchievement.objects.all()
     serializer_class = UserAchievementSerializer
-    permission_classes = [IsAuthenticated]
