@@ -13,6 +13,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,10 +37,10 @@ else:
         "http://94.241.175.55"
     ]
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:1337", "http://localhost", "http://0.0.0.0", "http://localhost:8000", "http://94.241.175.55"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:1337", "http://localhost", "http://0.0.0.0", "http://localhost:8000",
+                        "http://94.241.175.55"]
 ALLOWED_HOSTS = ['94.241.175.55', '0.0.0.0', 'localhost', '127.0.0.1', 'localhost:8000']
 
-# Application definition
 INSTALLED_APPS = [
     "django.contrib.sites",
     'django.contrib.admin',
@@ -57,13 +59,15 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "corsheaders",
+    'django_celery_beat',
     "drf_yasg",
     "feed",
     "competitions",
     "activity",
     "charity",
-    "achievement"
+    "achievement",
 ]
+# Application definition
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,10 +105,10 @@ WSGI_APPLICATION = 'dobriki.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("SQL_DATABASE", "dobriki"),
+        "USER": os.environ.get("SQL_USER", "postgres"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "postgres"),
         "HOST": os.environ.get("SQL_HOST", "localhost"),
         "PORT": os.environ.get("SQL_PORT", "5432"),
     }
@@ -133,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -176,3 +180,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
 }
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+

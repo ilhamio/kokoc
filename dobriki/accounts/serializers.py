@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from activity.models import Aim
 from competitions.models import UserTeam
 from competitions.serializers import UserTeamSerializer
 
@@ -14,11 +15,18 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AimSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Aim
+        exclude = ('user',)
+
+
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
     User model w/o password
     """
     teams = serializers.SerializerMethodField(read_only=True)
+    aim = serializers.SerializerMethodField(read_only=True)
 
     @staticmethod
     def validate_username(username):
@@ -43,7 +51,10 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             extra_fields.append('last_name')
         model = UserModel
         fields = ['id', *extra_fields, 'teams']
-        read_only_fields = ('email','date_joined')
+        read_only_fields = ('email', 'date_joined')
 
     def get_teams(self, obj):
         return UserTeamSerializer(obj.teams, many=True).data
+
+    def get_aim(self, obj):
+        return AimSerializer(obj.aim, many=True).data
