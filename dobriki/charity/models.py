@@ -9,7 +9,7 @@ class Charity(models.Model):
     organization_name = models.CharField(verbose_name="Название организации", max_length=255)
     name = models.CharField(verbose_name="Название фонда", max_length=255)
     is_active = models.BooleanField(verbose_name="Активность", default=False)
-    approved = models.BooleanField(verbose_name="Подтверждено администратором", default=False)
+    approved = models.BooleanField(verbose_name="Подтверждено администратором", default=False, editable=False)
     description = models.CharField(verbose_name="Описание", max_length=255)
     contact_email = models.EmailField(verbose_name="Почта для связи", blank=True, null=True)
     sum = models.DecimalField(verbose_name="Сумма сбора", max_digits=15, decimal_places=2)
