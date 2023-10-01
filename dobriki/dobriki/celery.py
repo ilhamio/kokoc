@@ -39,3 +39,17 @@ def recalculate():
         summa = config.step_count * i[0] + config.distance * i[1] + config.time * i[2] + config.kcal * i[3]
         wallet.balance += summa
         wallet.save()
+
+@app.task
+def subs():
+    from charity.models import CharitySubscription
+    subs = CharitySubscription.objects.all()
+
+    # if not len(config):
+    #     return
+    # config = config[0]
+    # for i in cursor.fetchall():
+    #     wallet = Wallet.objects.get(user_id=i[-1])
+    #     summa = config.step_count * i[0] + config.distance * i[1] + config.time * i[2] + config.kcal * i[3]
+    #     wallet.balance += summa
+    #     wallet.save()

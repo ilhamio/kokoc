@@ -1,8 +1,9 @@
-from drf_yasg.utils import swagger_auto_schema, no_body
-from rest_framework import viewsets, mixins
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import CharityFilterSet
 
 from charity.models import Charity, CharitySubscription
 from charity.serializers import CharitySerializer, CharitySubscriptionSerializer, CreateCharitySubscriptionSerializer
@@ -12,18 +13,11 @@ class CharityViewSet(viewsets.ModelViewSet):
     queryset = Charity.objects.all()
     serializer_class = CharitySerializer
 
-
-class CharitySubscriptionViewSet(
-                                 mixins.ListModelMixin,
-                                 mixins.DestroyModelMixin,
-                                 GenericViewSet):
+class CharitySubscriptionViewSet(viewsets.ModelViewSet):
     queryset = CharitySubscription.objects.all()
     serializer_class = CharitySubscriptionSerializer
-
-    def list(self, request, *args, **kwargs):
-        instance = self.request.user.subscription
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CharityFilterSet
 
     @swagger_auto_schema(method='post', request_body=CreateCharitySubscriptionSerializer,
                          responses={200: "{'result': 'successfully applied'}", 401: "{'error': 'Not authenticated'}"})
