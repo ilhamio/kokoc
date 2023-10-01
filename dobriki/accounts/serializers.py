@@ -35,11 +35,13 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     aim = serializers.SerializerMethodField(read_only=True)
     subscription = serializers.SerializerMethodField(read_only=True)
 
+    height = serializers.IntegerField(source='userprofile.height', required=False)
+    weight = serializers.DecimalField(source='userprofile.weight', max_digits=5, decimal_places=2, required=False)
+    age = serializers.IntegerField(source='userprofile.age', required=False)
+
     @staticmethod
     def validate_username(username):
         if 'allauth.account' not in settings.INSTALLED_APPS:
-            # We don't need to call the all-auth
-            # username validator unless its installed
             return username
 
         from allauth.account.adapter import get_adapter
@@ -57,7 +59,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         if hasattr(UserModel, 'last_name'):
             extra_fields.append('last_name')
         model = UserModel
-        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription']
+        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription', 'height', 'weight', 'age']
         read_only_fields = ('email', 'date_joined')
 
     def get_teams(self, obj):

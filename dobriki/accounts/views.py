@@ -34,6 +34,23 @@ class UserDetailAPIView(RetrieveUpdateAPIView):
         """
         return get_user_model().objects.none()
 
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        user_data = request.data
+        userprofile_data = user_data.get('userprofile', {})
+
+        # Обновляем поля height, weight и age, если они предоставлены в запросе
+        if 'height' in userprofile_data:
+            user.userprofile.height = userprofile_data['height']
+        if 'weight' in userprofile_data:
+            user.userprofile.weight = userprofile_data['weight']
+        if 'age' in userprofile_data:
+            user.userprofile.age = userprofile_data['age']
+
+        # Сохраняем изменения в UserProfile
+        user.userprofile.save()
+        return Response(self.get_serializer(user).data)
+
 
 class RegisterAPIView(RegisterView):
     def create(self, request, *args, **kwargs):
