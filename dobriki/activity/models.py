@@ -55,7 +55,7 @@ class ActivityIndicators(models.Model):
 
 
 class Aim(models.Model):
-    user = models.ForeignKey(to=UserModel, verbose_name="Пользователь", related_name='aim',on_delete=models.CASCADE)
+    user = models.ForeignKey(to=UserModel, verbose_name="Пользователь", related_name='aim', on_delete=models.CASCADE)
     step_aim = models.PositiveBigIntegerField(verbose_name="Цель по шагам", default=10000)
 
     def __str__(self):

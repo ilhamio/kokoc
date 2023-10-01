@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from activity.models import Aim
-from charity.models import Transaction
+from charity.models import Transaction, CharitySubscription
 from competitions.models import UserTeam
 from competitions.serializers import UserTeamSerializer
 
@@ -24,7 +24,7 @@ class AimSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Aim
+        model = CharitySubscription
         exclude = ('user',)
 
 
@@ -72,10 +72,15 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         return UserTeamSerializer(obj.teams, many=True).data
 
     def get_aim(self, obj):
-        return AimSerializer(obj.aim).data
+        aim = Aim.objects.get(user_id=obj.id)
+        return AimSerializer(aim).data
 
     def get_subscription(self, obj):
-        return AimSerializer(obj.subscription).data
+        try:
+            sub = CharitySubscription.objects.get(user_id=obj.id)
+            return SubscriptionSerializer(sub).data
+        except Exception:
+            return None
 
     def get_transactions(self, obj):
-        return TransactionSerializer(obj.subscription, many=True).data
+        return TransactionSerializer(obj.transactions, many=True).data

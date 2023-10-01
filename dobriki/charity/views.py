@@ -1,3 +1,5 @@
+import decimal
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
@@ -52,17 +54,17 @@ class TransactionViewSet(mixins.CreateModelMixin,
         data['user'] = request.user
         activity_id = data['fund']
         del data['fund']
-        fund = Charity.objects.filter(pk=activity_id, is_active=True, approved=True)
+        fund = Charity.objects.filter(pk=activity_id, is_active=True)
 
         if len(fund) == 0:
             return Response({"error": "Fund error"}, status=status.HTTP_400_BAD_REQUEST)
         fund = fund[0]
-        if wallet.balance < data['sum']:
+        if wallet.balance < float(data['sum']):
             return Response({"error": "Amount error"}, status=status.HTTP_400_BAD_REQUEST)
 
-        wallet -= data['sum']
+        wallet.balance -= decimal.Decimal(data['sum'])
         wallet.save()
-        fund.sum += data['sum']
+        fund.sum += decimal.Decimal(data['sum'])
         fund.save()
 
         Transaction.objects.create(user_id=request.user.id, fund_id=activity_id, sum=data['sum'])
