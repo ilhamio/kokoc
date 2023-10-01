@@ -17,8 +17,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def snap(self, request):
         serializer = ActivitySnapshotSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response({"error": "Wrong model!"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
         data = serializer.data
         data['user'] = request.user
         activity_id = data['activity_type']
