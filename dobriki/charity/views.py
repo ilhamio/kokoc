@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from charity.models import Charity, CharitySubscription, UserCharity
 from charity.serializers import CharitySerializer, CharitySubscriptionSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import CharityFilterSet
 
 class CharityViewSet(viewsets.ModelViewSet):
     queryset = Charity.objects.all()
@@ -17,6 +19,8 @@ class CharityViewSet(viewsets.ModelViewSet):
 class CharitySubscriptionViewSet(viewsets.ModelViewSet):
     queryset = CharitySubscription.objects.all()
     serializer_class = CharitySubscriptionSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CharityFilterSet
 
     @action(detail=True, methods=['POST'])
     def apply(self, request, pk=None):

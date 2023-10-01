@@ -8,6 +8,7 @@ class CharitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CharitySubscriptionSerializer(serializers.ModelSerializer):
+    charity = CharitySerializer()
     class Meta:
         model = CharitySubscription
         fields = '__all__'
