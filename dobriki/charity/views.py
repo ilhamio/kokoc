@@ -62,9 +62,9 @@ class TransactionViewSet(mixins.CreateModelMixin,
         if wallet.balance < float(data['sum']):
             return Response({"error": "Amount error"}, status=status.HTTP_400_BAD_REQUEST)
 
-        wallet.balance -= decimal.Decimal(data['sum'])
+        wallet.balance -= float(data['sum'])
         wallet.save()
-        fund.sum += decimal.Decimal(data['sum'])
+        fund.sum += float(data['sum'])
         fund.save()
 
         Transaction.objects.create(user_id=request.user.id, fund_id=activity_id, sum=data['sum'])
