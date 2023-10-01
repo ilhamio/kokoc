@@ -51,7 +51,7 @@ class Wallet(models.Model):
 class Transaction(models.Model):
     user = models.ForeignKey(UserModel, related_name='transactions', on_delete=models.CASCADE, verbose_name="Пользователь")
     sum = models.FloatField(verbose_name="Cумма перевода")
-    fund = models.OneToOneField(Charity, related_name='transactions', on_delete=models.CASCADE, verbose_name="Фонд")
+    fund = models.ForeignKey(Charity, related_name='transactions', on_delete=models.CASCADE, verbose_name="Фонд")
     created_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name="Дата проведения транзакции")
 
     def __str__(self):
