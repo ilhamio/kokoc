@@ -31,7 +31,7 @@ class ActivityConverter(models.Model):
     distance = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Расстояние")
     time = models.IntegerField(verbose_name="Время")
     kcal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Калории")
-    is_active = models.BooleanField(default=False)
+    activity = models.OneToOneField(Activity, on_delete=models.CASCADE, verbose_name="Активность")
 
     def __str__(self):
         return f"Коэффициенты {self.pk}"
@@ -53,7 +53,7 @@ class ActivityIndicators(models.Model):
 
 
 class Aim(models.Model):
-    user = models.ForeignKey(to=UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
+    user = models.ForeignKey(to=UserModel, verbose_name="Пользователь", related_name='aim',on_delete=models.CASCADE)
     step_aim = models.PositiveBigIntegerField(verbose_name="Цель по шагам", default=10000)
 
     def __str__(self):

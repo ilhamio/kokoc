@@ -50,7 +50,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         if hasattr(UserModel, 'last_name'):
             extra_fields.append('last_name')
         model = UserModel
-        fields = ['id', *extra_fields, 'teams']
+        fields = ['id', *extra_fields, 'teams', 'aim']
         read_only_fields = ('email', 'date_joined')
 
     def get_teams(self, obj):
