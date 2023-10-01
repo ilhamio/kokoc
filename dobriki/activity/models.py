@@ -44,9 +44,10 @@ class ActivityConverter(models.Model):
 
 class ActivityIndicators(models.Model):
     step_count = models.PositiveIntegerField(verbose_name="Количество шагов", default=0)
-    distance = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Расстояние")
+    distance = models.FloatField(verbose_name="Расстояние")
     time = models.IntegerField(verbose_name="Время")
-    kcal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Калории")
+    found = models.FloatField(verbose_name="Найденные бобры")
+    kcal = models.FloatField(verbose_name="Калории")
     activity_type = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
     class Meta:
@@ -54,7 +55,7 @@ class ActivityIndicators(models.Model):
 
 
 class Aim(models.Model):
-    user = models.ForeignKey(to=UserModel, verbose_name="Пользователь", related_name='aim',on_delete=models.CASCADE)
+    user = models.ForeignKey(to=UserModel, verbose_name="Пользователь", related_name='aim', on_delete=models.CASCADE)
     step_aim = models.PositiveBigIntegerField(verbose_name="Цель по шагам", default=10000)
 
     def __str__(self):

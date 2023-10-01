@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from activity.models import Aim
+from charity.models import Transaction, CharitySubscription
 from competitions.models import UserTeam
 from competitions.serializers import UserTeamSerializer
 
@@ -23,7 +24,13 @@ class AimSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Aim
+        model = CharitySubscription
+        exclude = ('user',)
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
         exclude = ('user',)
 
 
@@ -34,14 +41,13 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     teams = serializers.SerializerMethodField(read_only=True)
     aim = serializers.SerializerMethodField(read_only=True)
     subscription = serializers.SerializerMethodField(read_only=True)
-
-    height = serializers.IntegerField(source='userprofile.height', required=False)
-    weight = serializers.DecimalField(source='userprofile.weight', max_digits=5, decimal_places=2, required=False)
-    age = serializers.IntegerField(source='userprofile.age', required=False)
+    transactions = serializers.SerializerMethodField(read_only=True)
 
     @staticmethod
     def validate_username(username):
         if 'allauth.account' not in settings.INSTALLED_APPS:
+            # We don't need to call the all-auth
+            # username validator unless its installed
             return username
 
         from allauth.account.adapter import get_adapter
@@ -59,14 +65,22 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         if hasattr(UserModel, 'last_name'):
             extra_fields.append('last_name')
         model = UserModel
-        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription', 'height', 'weight', 'age']
+        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription', 'transactions']
         read_only_fields = ('email', 'date_joined')
 
     def get_teams(self, obj):
         return UserTeamSerializer(obj.teams, many=True).data
 
     def get_aim(self, obj):
-        return AimSerializer(obj.aim, many=True).data
+        aim = Aim.objects.get(user_id=obj.id)
+        return AimSerializer(aim).data
 
     def get_subscription(self, obj):
-        return AimSerializer(obj.subscription, many=True).data
+        try:
+            sub = CharitySubscription.objects.get(user_id=obj.id)
+            return SubscriptionSerializer(sub).data
+        except Exception:
+            return None
+
+    def get_transactions(self, obj):
+        return TransactionSerializer(obj.transactions, many=True).data

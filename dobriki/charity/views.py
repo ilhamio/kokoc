@@ -1,17 +1,23 @@
+import decimal
+
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.viewsets import GenericViewSet
+
 from .filters import CharityFilterSet
 
-from charity.models import Charity, CharitySubscription
-from charity.serializers import CharitySerializer, CharitySubscriptionSerializer, CreateCharitySubscriptionSerializer
+from charity.models import Charity, CharitySubscription, Wallet, Transaction
+from charity.serializers import CharitySerializer, CharitySubscriptionSerializer, CreateCharitySubscriptionSerializer, \
+    TransactionSerializer
 
 
 class CharityViewSet(viewsets.ModelViewSet):
-    queryset = Charity.objects.all()
+    queryset = Charity.objects.filter(is_active=True, approved=True)
     serializer_class = CharitySerializer
+
 
 class CharitySubscriptionViewSet(viewsets.ModelViewSet):
     queryset = CharitySubscription.objects.all()
@@ -31,31 +37,35 @@ class CharitySubscriptionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response({'result': "successfully applied"}, status=200)
-#
-#
-# @api_view(['POST'])
-# def transfer_money(request):
-#     user = request.user
-#     amount = request.data.get('amount')
-#     charity_id = request.data.get('charity_id')
-#
-#     try:
-#         user_charity = UserCharity.objects.get(user=user)
-#     except UserCharity.DoesNotExist:
-#         return Response({'error': 'User has no associated charity'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     if user_charity.sum < amount:
-#         return Response({'error': 'Not enough funds'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     user_charity.sum -= amount
-#     user_charity.save()
-#
-#     try:
-#         charity = Charity.objects.get(pk=charity_id)
-#     except Charity.DoesNotExist:
-#         return Response({'error': 'Charity not found'}, status=status.HTTP_404_NOT_FOUND)
-#
-#     charity.got_sum += amount
-#     charity.save()
-#
-#     return Response({'message': 'Money transferred successfully'}, status=status.HTTP_200_OK)
+
+
+class TransactionViewSet(mixins.CreateModelMixin,
+                         GenericViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        wallet: Wallet = user.wallet
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        data['user'] = request.user
+        activity_id = data['fund']
+        del data['fund']
+        fund = Charity.objects.filter(pk=activity_id, is_active=True)
+
+        if len(fund) == 0:
+            return Response({"error": "Fund error"}, status=status.HTTP_400_BAD_REQUEST)
+        fund = fund[0]
+        if wallet.balance < float(data['sum']):
+            return Response({"error": "Amount error"}, status=status.HTTP_400_BAD_REQUEST)
+
+        wallet.balance -= float(data['sum'])
+        wallet.save()
+        fund.sum += float(data['sum'])
+        fund.save()
+
+        Transaction.objects.create(user_id=request.user.id, fund_id=activity_id, sum=data['sum'])
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

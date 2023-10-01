@@ -12,7 +12,7 @@ class Charity(models.Model):
     approved = models.BooleanField(verbose_name="Подтверждено администратором", default=False, editable=False)
     description = models.CharField(verbose_name="Описание", max_length=255)
     contact_email = models.EmailField(verbose_name="Почта для связи", blank=True, null=True)
-    sum = models.DecimalField(verbose_name="Сумма сбора", max_digits=15, decimal_places=2)
+    sum = models.DecimalField(verbose_name="Сумма сбора", max_digits=15, decimal_places=2, default=0)
 
     def __str__(self):
         return f"Фонд {self.name}"
@@ -38,7 +38,7 @@ class CharitySubscription(models.Model):
 
 class Wallet(models.Model):
     user = models.OneToOneField(UserModel, related_name='wallet', on_delete=models.CASCADE, verbose_name="Пользователь")
-    balance = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Баланс", default=0)
+    balance = models.FloatField(verbose_name="Баланс", default=0)
 
     def __str__(self):
         return f"Кошелек {self.user}"
@@ -49,9 +49,9 @@ class Wallet(models.Model):
 
 
 class Transaction(models.Model):
-    user = models.ForeignKey(UserModel, related_name='tra', on_delete=models.CASCADE, verbose_name="Пользователь")
-    sum = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Cумма перевода")
-    fund = models.OneToOneField(Charity, related_name='transactions', on_delete=models.CASCADE, verbose_name="Фонд")
+    user = models.ForeignKey(UserModel, related_name='transactions', on_delete=models.CASCADE, verbose_name="Пользователь")
+    sum = models.FloatField(verbose_name="Cумма перевода")
+    fund = models.ForeignKey(Charity, related_name='transactions', on_delete=models.CASCADE, verbose_name="Фонд")
     created_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name="Дата проведения транзакции")
 
     def __str__(self):
