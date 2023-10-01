@@ -36,6 +36,10 @@ class ActivityConverter(models.Model):
     def __str__(self):
         return f"Коэффициенты {self.pk}"
 
+    class Meta:
+        verbose_name = "Настройка коэффициентов"
+        verbose_name_plural = "Настройки коэффициентов"
+
 
 class ActivityIndicators(models.Model):
     step_count = models.PositiveIntegerField(verbose_name="Количество шагов", default=0)
@@ -54,6 +58,10 @@ class Aim(models.Model):
 
     def __str__(self):
         return f"Цель по шагам для {self.user}"
+
+    class Meta:
+        verbose_name = "Цель"
+        verbose_name_plural = "Цели"
 
 
 class ActivitySnapshot(ActivityIndicators, models.Model):
