@@ -7,7 +7,9 @@ class AchievementSerializer(serializers.ModelSerializer):
         model = Achievement
         fields = '__all__'
 
+
 class UserAchievementSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = UserAchievement
         fields = '__all__'

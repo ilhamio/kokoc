@@ -29,6 +29,9 @@ class PersonalCompetitionViewSet(viewsets.ModelViewSet):
     queryset = PersonalCompetition.objects.all()
     serializer_class = PersonalCompetitionSerializer
 
+
+    @swagger_auto_schema(method='post', request_body=no_body,
+                         responses={200: "{'result': 'successfully applied'}", 401: "{'error': 'Not authenticated'}"})
     @action(detail=True, methods=['POST'])
     def apply(self, request, pk=None):
         if not request.user.is_authenticated:
@@ -36,3 +39,4 @@ class PersonalCompetitionViewSet(viewsets.ModelViewSet):
         obj: PersonalCompetition = self.get_object()
         request.user.personal_competitions.add(obj)
         return Response({'result': "successfully applied"}, status=200)
+

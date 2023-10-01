@@ -1,35 +1,41 @@
-from rest_framework import viewsets
+from drf_yasg.utils import swagger_auto_schema, no_body
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
-from rest_framework.decorators import api_view
-from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
 from charity.models import Charity, CharitySubscription
-from charity.serializers import CharitySerializer, CharitySubscriptionSerializer
+from charity.serializers import CharitySerializer, CharitySubscriptionSerializer, CreateCharitySubscriptionSerializer
 
 
 class CharityViewSet(viewsets.ModelViewSet):
     queryset = Charity.objects.all()
-    # filter_backends = [OrderingFilter, SearchFilter, DjangoFilterBackend]
     serializer_class = CharitySerializer
-    # ordering_fields = ['name', 'coefficient']
-    # ordering = ['name']
-    # search_fields = ['name', 'description']
 
 
-class CharitySubscriptionViewSet(viewsets.ModelViewSet):
+class CharitySubscriptionViewSet(
+                                 mixins.ListModelMixin,
+                                 mixins.DestroyModelMixin,
+                                 GenericViewSet):
     queryset = CharitySubscription.objects.all()
     serializer_class = CharitySubscriptionSerializer
 
-    @action(detail=True, methods=['POST'])
-    def apply(self, request, pk=None):
+    def list(self, request, *args, **kwargs):
+        instance = self.request.user.subscription
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(method='post', request_body=CreateCharitySubscriptionSerializer,
+                         responses={200: "{'result': 'successfully applied'}", 401: "{'error': 'Not authenticated'}"})
+    @action(detail=False, methods=['POST'])
+    def apply(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'Not authenticated'}, status=401)
-        obj: CharitySubscription = self.get_object()
-
-        if obj.user != request.user:
-            return Response({'error': 'You can only create subscriptions for yourself'}, status=403)
-
-        request.user.charity_subscription.add(obj)
+        data = request.data
+        data['user'] = request.user.pk
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
         return Response({'result': "successfully applied"}, status=200)
 #
 #

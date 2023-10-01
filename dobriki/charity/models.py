@@ -26,8 +26,6 @@ class CharitySubscription(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='subscription', on_delete=models.CASCADE,
                                 verbose_name="Пользователь")
     charity = models.ForeignKey(Charity, related_name="subscriptions", on_delete=models.CASCADE, verbose_name="Фонд")
-    sum = models.DecimalField(verbose_name="Сумма пожертвования", max_digits=15, decimal_places=2)
-    days = models.IntegerField(verbose_name="Количество дней")
     created_at = models.DateTimeField(verbose_name="Время создания подписки", auto_now_add=True, auto_created=True)
 
     def __str__(self):

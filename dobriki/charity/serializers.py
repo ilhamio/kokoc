@@ -7,7 +7,15 @@ class CharitySerializer(serializers.ModelSerializer):
         model = Charity
         fields = '__all__'
 
+
 class CharitySubscriptionSerializer(serializers.ModelSerializer):
+    charity = CharitySerializer()
     class Meta:
         model = CharitySubscription
-        fields = '__all__'
+        exclude = ('user',)
+
+
+class CreateCharitySubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CharitySubscription
+        fields = ['charity']

@@ -21,12 +21,19 @@ class AimSerializer(serializers.ModelSerializer):
         exclude = ('user',)
 
 
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Aim
+        exclude = ('user',)
+
+
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
     User model w/o password
     """
     teams = serializers.SerializerMethodField(read_only=True)
     aim = serializers.SerializerMethodField(read_only=True)
+    subscription = serializers.SerializerMethodField(read_only=True)
 
     @staticmethod
     def validate_username(username):
@@ -50,7 +57,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         if hasattr(UserModel, 'last_name'):
             extra_fields.append('last_name')
         model = UserModel
-        fields = ['id', *extra_fields, 'teams', 'aim']
+        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription']
         read_only_fields = ('email', 'date_joined')
 
     def get_teams(self, obj):
@@ -58,3 +65,6 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     def get_aim(self, obj):
         return AimSerializer(obj.aim, many=True).data
+
+    def get_subscription(self, obj):
+        return AimSerializer(obj.subscription, many=True).data
