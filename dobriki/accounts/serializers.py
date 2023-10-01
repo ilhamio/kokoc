@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from activity.models import Aim
+from charity.models import Transaction
 from competitions.models import UserTeam
 from competitions.serializers import UserTeamSerializer
 
@@ -27,6 +28,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         exclude = ('user',)
 
 
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        exclude = ('user',)
+
+
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
     User model w/o password
@@ -34,6 +41,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     teams = serializers.SerializerMethodField(read_only=True)
     aim = serializers.SerializerMethodField(read_only=True)
     subscription = serializers.SerializerMethodField(read_only=True)
+    transactions = serializers.SerializerMethodField(read_only=True)
 
     @staticmethod
     def validate_username(username):
@@ -57,14 +65,17 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         if hasattr(UserModel, 'last_name'):
             extra_fields.append('last_name')
         model = UserModel
-        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription']
+        fields = ['id', *extra_fields, 'teams', 'aim', 'subscription', 'transactions']
         read_only_fields = ('email', 'date_joined')
 
     def get_teams(self, obj):
         return UserTeamSerializer(obj.teams, many=True).data
 
     def get_aim(self, obj):
-        return AimSerializer(obj.aim, many=True).data
+        return AimSerializer(obj.aim).data
 
     def get_subscription(self, obj):
-        return AimSerializer(obj.subscription, many=True).data
+        return AimSerializer(obj.subscription).data
+
+    def get_transactions(self, obj):
+        return TransactionSerializer(obj.subscription, many=True).data

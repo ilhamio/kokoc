@@ -46,6 +46,7 @@ class ActivityIndicators(models.Model):
     step_count = models.PositiveIntegerField(verbose_name="Количество шагов", default=0)
     distance = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Расстояние")
     time = models.IntegerField(verbose_name="Время")
+    found = models.IntegerField(verbose_name="Найденные бобры")
     kcal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Калории")
     activity_type = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
